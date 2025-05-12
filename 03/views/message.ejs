@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <form onsubmit="submitForm(event)">
+    <input type="hidden" name="id" value="<%= id %>">
+    <input type="text" name="message" value="<%= message %>" placeholder="message">
+    <button type="submit">submit</button>
+    <button type="button" onclick="deleteMessage()">delete</button>
+  </form>
+  <script>
+    function submitForm(e) {
+      e.preventDefault();
+      const form = document.querySelector("form");
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+      console.log('data: ', data);
+      fetch(`/api/messages/${data.id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          window.location.href = "/messages";
+        });
+    }
+    function deleteMessage() {
+      fetch(`/api/messages/${id}`, { method: "DELETE" })
+        .then(res => res.json())
+        .then(data => {
+          window.location.href = "/messages";
+        });
+    }
+  </script>
+</body>
+
+</html>
